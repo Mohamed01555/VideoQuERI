@@ -1,7 +1,7 @@
 freeGPT==1.2.8
 gradio_client==0.4.0
 langchain==0.0.268
-tiktoken 0.4.0
+tiktoken==0.4.0
 pytube==15.0.0
 streamlit==1.25.0
 streamlit_option_menu==0.3.6
