@@ -8,8 +8,8 @@ from pathlib import Path
 from streamlit_option_menu import option_menu
 
 question_prompt_template = """
-    You are very good at handling very long texts,so I will give you a video transcription splitted in small pieces,this is piece number {i}.You will get an query about it,\n\n
-    caption: {input}\n\n
+    You are very good at handling very long texts,so I will give you a video transcription splitted in small pieces,this is piece number {i}.You will get a query about it,\n\n
+    transcription: {input}\n\n
     
     query: {question}    \n\n
     feel free to neglect the given transcription if you see that the query is not related to it like thank you or ok and similars, provide instead an appropriate answer like you are welcome.
@@ -31,8 +31,9 @@ prompt = PromptTemplate(input_variables=["i","input", "question"], template=ques
 async def get_answer(question):
     try:
         resp = await getattr(freeGPT, 'gpt4').Completion().create(question)
+        st.write('gpt4')
         return resp
-
+        
     except:
         try:
             resp = await getattr(freeGPT, 'gpt3').Completion().create(question)
