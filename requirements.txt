@@ -1,4 +1,4 @@
-freeGPT==1.2.8
+freeGPT==1.2.7
 gradio_client==0.4.0
 langchain==0.0.268
 tiktoken==0.4.0
