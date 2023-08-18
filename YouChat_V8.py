@@ -217,7 +217,7 @@ def main():
                         except:
                             query = query
                         start, end = extract_start_end_time(doc.page_content)
-                        
+                        st.write(query)
                         if start is not None and end is not None:  
                             with st.spinner(f"Searching for the answer in the period {start} --> {end}"):
                                 ai_response = run(get_answer(query))
