@@ -46,27 +46,6 @@ def img_to_bytes(img_path):
     encoded = base64.b64encode(img_bytes).decode()
     return encoded
 
-# def answer(chunk_number, doc, question):
-#     query = prompt.format(i = chunk_number, input = doc.page_content, question = question)
-#     query += st.session_state.prev_qa if st.session_state.prev_qa else ''
-#     start, end = extract_start_end_time(doc.page_content)
-#     if start is not None and end is not None:  
-#         with st.spinner(f"Searching for the answer in the period {start} --> {end}"):
-#             ai_response = run(get_answer(query))
-
-#             ai_response_decoded = decode_unicode(ai_response)
-#             time = f"""<span style="color: #00FF00;">Answer in the period <span style="color: #800080;">{start} --> {end}</span> is \n\n</span>"""
-#             full_response += '\n' + time + '\n'+ ai_response_decoded + '\n'
-
-#             st.session_state.message_placeholder.markdown(full_response + " |", unsafe_allow_html=True)
-    
-#     else:
-#         ai_response = run(get_answer(query))
-#         ai_response_decoded = decode_unicode(ai_response)
-#         full_response += '\n' + ai_response_decoded
-    
-#     return full_response
-
 def main():
     # setup streamlit page
     st.set_page_config(
