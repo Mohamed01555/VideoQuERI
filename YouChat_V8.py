@@ -37,6 +37,8 @@ async def get_answer(question):
     except:
         try:
             resp = await getattr(freeGPT, 'gpt3').Completion().create(question)
+            st.write('gpt3')
+
             return resp
         except:
             st.info('Service may be stopped or you are disconnected with internet. Feel free to open an issue here "https://github.com/Mohamed01555/VideoQuERI"')
