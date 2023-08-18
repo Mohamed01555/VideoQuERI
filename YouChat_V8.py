@@ -8,17 +8,18 @@ from pathlib import Path
 from streamlit_option_menu import option_menu
 
 question_prompt_template = """
-    You are very good at handling very long texts,so I will give long one splitted in small pieces,this is piece number {i}.You will get an query about it,\n\n
-    transcription: {input}\n\n
+    You are very good at handling very long texts,so I will give you a video transcription splitted in small pieces,this is piece number {i}.You will get an query about it,\n\n
+    caption: {input}\n\n
     
     query: {question}    \n\n
-    feel free to neglect the given text if you see that the query is not related to it like thank you or ok and similars, provide instead an appropriate answer like you are welcome.
-    query may be a question about it or not, do your best to extract the answer if it exists or make up a suitable answer but hint me if you made one.
+    feel free to neglect the given transcription if you see that the query is not related to it like thank you or ok and similars, provide instead an appropriate answer like you are welcome.
+    query may be a question about it or not, do your best to extract the answer if it exists or make up a suitable answer but hint me if you made one(say for example This answer is not mentioned but and this is a made one).
     or it can be explaining something in a simpler way,
     or it can be writing programming code explaining a concept in it,
-    or splitting it to chapters of homogenious content like youtube does.Do your best to give me the answer in this format "hr:min:sec title" and make sure that each chapter is at least 5 minutes.
+    or summerizing it in number of words,
+    or splitting it to chapters of homogenious content like youtube does.Do your best to give me the answer in this format "hr:min:sec title" and make sure that each chapter is at least 3 minutes.
     or any query
-    you may be asked to provide your answer in specific language like arabic, and you must provide your answer in asked language.
+    you may be asked to provide your answer in specific language like arabic, and you must provide your answer in the asked language.
     Also you may be provided with the previous query and a summary of your answer to use them like a memory of past interactions.
     You can neglect them if you see that the answer of the current query doesn't need them.
         
@@ -107,6 +108,7 @@ def main():
 
     # Set the maximum number of stored captions
     MAX_CAPTIONS = 10
+
     with st.sidebar:
         video_url = st.text_input("**Paste the video url here:**")
         
@@ -177,7 +179,7 @@ def main():
             if st.session_state.chosen_chunks:
                 st.info(f"Selected Chunks: {st.session_state.chosen_chunks}")
 
-        st.session_state.chosen_radio = st.radio("Do you wnat to add some sort of memory?", ['Yes', 'No'], help="Note that it is not that accurate memory")
+        st.session_state.chosen_radio = st.radio("Do you wnat to add some sort of memory?", ['No', 'Yes'], help="Note that it is not that accurate memory")
            
     if option == 'Home':
         for response in st.session_state.responses:
@@ -199,7 +201,6 @@ def main():
             with st.chat_message('assistant'):
                 st.session_state.message_placeholder = st.empty()
                 full_response = ''
-
                 #if the user entered specefic chunks to query about
                 if len(st.session_state.chosen_chunks) != 0:
                     for c in st.session_state.chosen_chunks: 
@@ -221,25 +222,17 @@ def main():
                                 ai_response_decoded = decode_unicode(ai_response)
                                 time_ = f"""<span style="color: #00FF00;">Answer in the period <span style="color: #800080;">{start} --> {end}</span> is \n\n</span>"""
                                 full_response += '\n' + time_ + '\n'+ ai_response_decoded + '\n'
-                                
-                                streamed_res = ''
-                                for word in full_response.split():
-                                    streamed_res += word + " "
-                                    sleep(0.05)
-                                    st.session_state.message_placeholder.markdown(streamed_res + "▌", unsafe_allow_html=True)
+  
+                                st.session_state.message_placeholder.markdown(full_response + "▌", unsafe_allow_html=True)
+                                    
                         
                         else:
                             ai_response = run(get_answer(query))
                             ai_response_decoded = decode_unicode(ai_response)
                             full_response += '\n\n' + ai_response_decoded + '\n\n'
                         
-                            #To make the output streamed like ChatGPT    
-                            streamed_res = ''
-                            for word in full_response.split():
-                                streamed_res += word + " "
-                                sleep(0.05)
-                                st.session_state.message_placeholder.markdown(streamed_res + "▌", unsafe_allow_html=True)
-
+                            st.session_state.message_placeholder.markdown(full_response + "▌", unsafe_allow_html=True)
+                            
                 
                 #if the user did not entered specefic chunks, use all chunks
                 else:
@@ -262,19 +255,15 @@ def main():
                                 time = f"""<span style="color: #00FF00;">Answer in the period <span style="color: #800080;">{start} --> {end}</span> is \n\n</span>"""
                                 full_response += '\n' + time + '\n'+ ai_response_decoded + '\n'
                                 
-                                #To make the output streamed like ChatGPT
-                                streamed_res = ''
-                                for word in full_response.split():
-                                    streamed_res += word + " "
-                                    sleep(0.05)
-                                    st.session_state.message_placeholder.markdown(streamed_res + "▌", unsafe_allow_html=True)
-                                
+                                st.session_state.message_placeholder.markdown(full_response + "▌", unsafe_allow_html=True)
                         
                         else:
                             ai_response = run(get_answer(query))
                             ai_response_decoded = decode_unicode(ai_response)
                             full_response += '\n' + ai_response_decoded
-            
+                            
+                            st.session_state.message_placeholder.markdown(full_response + "▌", unsafe_allow_html=True)
+                
                 st.session_state.message_placeholder.markdown(full_response, unsafe_allow_html=True)
                 
                 if st.session_state.chosen_radio == 'Yes':
