@@ -221,7 +221,7 @@ def main():
                         if start is not None and end is not None:  
                             with st.spinner(f"Searching for the answer in the period {start} --> {end}"):
                                 ai_response = run(get_answer(query))
-
+                                st.markdown(ai_response)
                                 ai_response_decoded = decode_unicode(ai_response)
                                 time_ = f"""<span style="color: #00FF00;">Answer in the period <span style="color: #800080;">{start} --> {end}</span> is \n\n</span>"""
                                 full_response += '\n' + time_ + '\n'+ ai_response_decoded + '\n'
