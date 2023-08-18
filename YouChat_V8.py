@@ -30,7 +30,6 @@ prompt = PromptTemplate(input_variables=["i","input", "question"], template=ques
 async def get_answer(question):
     try:
         resp = await getattr(freeGPT, 'gpt4').Completion().create(question)
-        # st.write('gpt3')
         return resp
 
     except:
@@ -38,7 +37,7 @@ async def get_answer(question):
             resp = await getattr(freeGPT, 'gpt3').Completion().create(question)
             return resp
         except:
-            st.info('Service may be stopped or you are disconnected with internet. Feel free to open an issue here "github repo link"')
+            st.info('Service may be stopped or you are disconnected with internet. Feel free to open an issue here "https://github.com/Mohamed01555/VideoQuERI"')
             st.stop()
 
 def img_to_bytes(img_path):
@@ -103,6 +102,9 @@ def main():
     if "question" not in st.session_state:
         st.session_state.question = None
 
+    if "chosen_radio" not in st.session_state:
+        st.session_state.chosen_radio = None
+
     # Set the maximum number of stored captions
     MAX_CAPTIONS = 10
     with st.sidebar:
@@ -129,9 +131,7 @@ def main():
                             text_splitter = TokenTextSplitter(chunk_size = selected_value, chunk_overlap=11)
                             st.session_state.chunks = text_splitter.split_documents(st.session_state.caption)
                             
-                            #add the url to the list to ensure whether i will provide a summary of perious qa
-                            # st.session_state.video_url_list.append(video_url)
-                            
+                            #add the url to the list to ensure whether i will provide a summary of perious qa                            
                             st.info("Caption was generated successfully. You can ask now.")
                         
                         else:
@@ -143,7 +143,6 @@ def main():
                         st.session_state.chunks = text_splitter.split_documents(st.session_state.caption)
                     
                         #add the url to the list to ensure whether i will provide a summary of perious qa    
-                        # st.session_state.video_url_list.append(video_url)
                         st.info("Caption was generated successfully. You can ask now")
 
                         
@@ -167,7 +166,6 @@ def main():
                     f'Number of Chunks : {len(st.session_state.chunks)}\n\n{t}'
                     )
 
-            # st.write("**If your query is about specific chunks, please choose them** :slightly_smiling_face:")
             with st.expander("**If your query is about specific chunks, please choose them** :slightly_smiling_face:"):
 
                 st.session_state.chosen_chunks = []
@@ -178,6 +176,8 @@ def main():
 
             if st.session_state.chosen_chunks:
                 st.info(f"Selected Chunks: {st.session_state.chosen_chunks}")
+
+        st.session_state.chosen_radio = st.radio("Do you wnat to add some sort of memory?", ['Yes', 'No'], help="Note that it is not that accurate memory")
            
     if option == 'Home':
         for response in st.session_state.responses:
@@ -232,6 +232,8 @@ def main():
                             ai_response = run(get_answer(query))
                             ai_response_decoded = decode_unicode(ai_response)
                             full_response += '\n\n' + ai_response_decoded + '\n\n'
+                        
+                            #To make the output streamed like ChatGPT    
                             streamed_res = ''
                             for word in full_response.split():
                                 streamed_res += word + " "
@@ -259,6 +261,8 @@ def main():
                                 ai_response_decoded = decode_unicode(ai_response)
                                 time = f"""<span style="color: #00FF00;">Answer in the period <span style="color: #800080;">{start} --> {end}</span> is \n\n</span>"""
                                 full_response += '\n' + time + '\n'+ ai_response_decoded + '\n'
+                                
+                                #To make the output streamed like ChatGPT
                                 streamed_res = ''
                                 for word in full_response.split():
                                     streamed_res += word + " "
@@ -272,15 +276,17 @@ def main():
                             full_response += '\n' + ai_response_decoded
             
                 st.session_state.message_placeholder.markdown(full_response, unsafe_allow_html=True)
-
-                #get a summary of the answer and append before the next question
-                # summary_prompt = f"""
-                # Please summarize this in 100 to 200 words as a mximum.
-                # Retain any programming code present, even if doing so exceeds the 200-word limit.
-                # Capture the entites if exist\n{full_response}
-                # """
-                # summary = run(get_answer(summary_prompt))
-                # st.session_state.prev_qa = f"This is the previous question: {st.session_state.question}\nand this is the summary of your answer: {summary}"
+                
+                if st.session_state.chosen_radio == 'Yes':
+                    # get a summary of the answer and append before the next question
+                    summary_prompt = f"""
+                    Please summarize this in 100 to 200 words as a mximum.
+                    Retain any programming code present, even if doing so exceeds the 200-word limit.
+                    Capture the entites if exist\n{full_response}
+                    """
+                    summary = run(get_answer(summary_prompt))
+                    st.session_state.prev_qa = f"This is the previous question: {st.session_state.question}\nand this is the summary of your answer: {summary}"
+                
                             
             st.session_state.video_url_list.append(video_url)
 
