@@ -31,7 +31,6 @@ prompt = PromptTemplate(input_variables=["i","input", "question"], template=ques
 async def get_answer(question):
     # try:
         resp = await getattr(freeGPT, 'gpt4').Completion().create(question)
-        st.write('gpt4')
         return resp
         
     # except:
@@ -217,7 +216,7 @@ def main():
                         except:
                             query = query
                         start, end = extract_start_end_time(doc.page_content)
-                        # st.write(query)
+                        st.write(query)
                         if start is not None and end is not None:  
                             with st.spinner(f"Searching for the answer in the period {start} --> {end}"):
                                 ai_response = run(get_answer(query))
@@ -248,7 +247,7 @@ def main():
                                 query += st.session_state.prev_qa if st.session_state.prev_qa else ''
                         except:
                             query = query
-                        
+                        st.write(query)
                         start, end = extract_start_end_time(doc.page_content)
                         if start is not None and end is not None:  
                             with st.spinner(f"Searching for the answer in the period {start} --> {end}"):
