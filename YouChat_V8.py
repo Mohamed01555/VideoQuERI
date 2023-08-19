@@ -29,19 +29,17 @@ question_prompt_template = """
 prompt = PromptTemplate(input_variables=["i","input", "question"], template=question_prompt_template)
 
 async def get_answer(question):
-    # try:
+    try:
         resp = await getattr(freeGPT, 'gpt4').Completion().create(question)
         return resp
         
-    # except:
-    #     try:
-    #         resp = await getattr(freeGPT, 'gpt3').Completion().create(question)
-    #         st.write('gpt3')
-
-    #         return resp
-    #     except:
-    #         st.info('Service may be stopped or you are disconnected with internet. Feel free to open an issue here "https://github.com/Mohamed01555/VideoQuERI"')
-    #         st.stop()
+    except:
+        try:
+            resp = await getattr(freeGPT, 'gpt3').Completion().create(question)
+            return resp
+        except:
+            st.info('Service may be stopped or you are disconnected with internet. Feel free to open an issue here "https://github.com/Mohamed01555/VideoQuERI"')
+            st.stop()
 
 def img_to_bytes(img_path):
     img_bytes = Path(img_path).read_bytes()
@@ -216,11 +214,9 @@ def main():
                         except:
                             query = query
                         start, end = extract_start_end_time(doc.page_content)
-                        st.write(query)
                         if start is not None and end is not None:  
                             with st.spinner(f"Searching for the answer in the period {start} --> {end}"):
                                 ai_response = run(get_answer(query))
-                                st.markdown(ai_response)
                                 ai_response_decoded = decode_unicode(ai_response)
                                 time_ = f"""<span style="color: #00FF00;">Answer in the period <span style="color: #800080;">{start} --> {end}</span> is \n\n</span>"""
                                 full_response += '\n' + time_ + '\n'+ ai_response_decoded + '\n'
@@ -247,7 +243,7 @@ def main():
                                 query += st.session_state.prev_qa if st.session_state.prev_qa else ''
                         except:
                             query = query
-                        st.write(query)
+                        
                         start, end = extract_start_end_time(doc.page_content)
                         if start is not None and end is not None:  
                             with st.spinner(f"Searching for the answer in the period {start} --> {end}"):
