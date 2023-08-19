@@ -50,6 +50,10 @@ class Completion:
         resp = client.get(
             "https://you.com/api/streamingSearch", params=params, timeout_seconds=30
         )
+        
+        print("Response Status Code:", resp.status_code)
+        print("Response Text:", resp.text)
+
         if "youChatToken" not in resp.text:
             raise Exception("Unable to fetch response.")
         return (
