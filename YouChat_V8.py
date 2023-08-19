@@ -1,4 +1,5 @@
-import freeGPT
+import gpt4
+import gpt3
 from time import sleep
 from asyncio import run
 from langchain.prompts import PromptTemplate
@@ -29,17 +30,17 @@ question_prompt_template = """
 prompt = PromptTemplate(input_variables=["i","input", "question"], template=question_prompt_template)
 
 async def get_answer(question):
-    # try:
-        resp = await getattr(freeGPT, 'gpt4').Completion().create(question)
+    try:
+        resp = await gpt4.Completion().create(question)
         return resp
         
-    # except:
-    #     try:
-    #         resp = await getattr(freeGPT, 'gpt3').Completion().create(question)
-    #         return resp
-    #     except:
-    #         st.info('Service may be stopped or you are disconnected with internet. Feel free to open an issue here "https://github.com/Mohamed01555/VideoQuERI"')
-    #         st.stop()
+    except:
+        try:
+            resp = await gpt3.Completion().create(question)
+            return resp
+        except:
+            st.info('Service may be stopped or you are disconnected with internet. Feel free to open an issue here "https://github.com/Mohamed01555/VideoQuERI"')
+            st.stop()
 
 def img_to_bytes(img_path):
     img_bytes = Path(img_path).read_bytes()
