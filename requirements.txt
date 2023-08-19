@@ -1,4 +1,4 @@
-gradio_client==0.4.0
+gradio_client==0.2.6
 langchain==0.0.268
 tiktoken==0.4.0
 pytube==15.0.0
