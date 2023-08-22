@@ -1,7 +1,14 @@
 from uuid import uuid4
 from re import findall
-from subprocess import check_call
 import tls_client
+
+# ch = [chrome_103, chrome_104, chrome_105, chrome_106, chrome_107, chrome_108, chrome109, Chrome110, chrome111, chrome112, 
+#       firefox_102, firefox_104, firefox108, Firefox110,
+#       opera_89, opera_90,
+#       safari_15_3, safari_15_6_1, safari_16_0,
+#       safari_ios_15_5, safari_ios_15_6, safari_ios_16_0,
+#       safari_ios_15_6,
+#       okhttp4_android_7, okhttp4_android_8, okhttp4_android_9, okhttp4_android_10, okhttp4_android_11, okhttp4_android_12, okhttp4_android_13]
 
 
 class Completion:
@@ -19,7 +26,7 @@ class Completion:
         Raises:
             Exception: If unable to fetch the response or the required token from the response.
         """
-        client = tls_client.Session(client_identifier="chrome_108")
+        client = tls_client.Session(client_identifier='firefox_102')
         client.headers = {
             "authority": "you.com",
             "accept": "text/event-stream",
@@ -51,9 +58,6 @@ class Completion:
             "https://you.com/api/streamingSearch", params=params, timeout_seconds=30
         )
         
-        print("Response Status Code:", resp.status_code)
-        print("Response Text:", resp.text)
-
         if "youChatToken" not in resp.text:
             raise Exception("Unable to fetch response.")
         return (
@@ -62,3 +66,4 @@ class Completion:
             .replace("\\\\", "\\")
             .replace('\\"', '"')
         )
+    
