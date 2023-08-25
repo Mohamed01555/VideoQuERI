@@ -7,3 +7,4 @@ streamlit_option_menu==0.3.6
 youtube_transcript_api==0.6.1
 yt_dlp==2023.3.4
 tls-client == 0.2.1
+curl_cffi
